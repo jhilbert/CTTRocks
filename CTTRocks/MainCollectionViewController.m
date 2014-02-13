@@ -15,16 +15,18 @@
 
 static NSString const *kShowRock = @"showRock";
 
-@interface MainCollectionViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout>
+@interface MainCollectionViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UISearchBarDelegate>
 
 {
     NSArray *rocks;
     UIImage *imageForCell;
 
+
     IBOutlet UICollectionView *collectionView;
     __weak IBOutlet UICollectionViewFlowLayout *collectionViewFlowLayout;
     
     NSIndexPath *selectedIP;
+    NSMutableArray *arrayOfAllIndexPaths;
     
     UICollectionViewFlowLayout *springFlowLayout;
     
@@ -57,11 +59,16 @@ static NSString const *kShowRock = @"showRock";
     fontForLocation = [UIFont fontWithName:@"HelveticaNeue" size:17];
     fontForNumber = [UIFont fontWithName:@"HelveticaNeue" size:12];
     
-    springFlowLayout = [[SpringFlowLayout alloc] init];
-    springFlowLayout.itemSize = CGSizeMake(300, 300);
-    collectionViewFlowLayout = springFlowLayout;
+//    springFlowLayout = [[SpringFlowLayout alloc] init];
+//    springFlowLayout.itemSize = CGSizeMake(300, 300);
+//    springFlowLayout.headerReferenceSize = CGSizeMake(collectionView.frame.size.width, 100);
+//
+//    collectionViewFlowLayout = springFlowLayout;
     collectionViewFlowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
     collectionView.backgroundColor = [UIColor blackColor];
+ 
+    collectionView.delegate = self;
+    collectionView.dataSource = self;
     
     landscape = NO;
     
@@ -69,6 +76,43 @@ static NSString const *kShowRock = @"showRock";
    
     imageForCell = [UIImage imageNamed:@"640x150_rounded_opaque"];
 
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+}
+
+-(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    if ([searchText isEqualToString:@""])
+    {
+        rocks = [Rock rocks];
+    }
+    else
+    {
+        rocks = [Rock rocksFiltered:searchText];
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^
+                   {
+                       [collectionView reloadItemsAtIndexPaths:arrayOfAllIndexPaths];
+    //
+    //                   [collectionView reloadData];
+                   });
+   
+    [collectionView reloadData];
+}
+
+-(void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    [searchBar setShowsCancelButton:YES animated:YES];
+}
+
+-(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [searchBar setText:@""];
+    [searchBar setShowsCancelButton:NO animated:YES];
+    [searchBar resignFirstResponder];
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)cv cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -83,7 +127,6 @@ static NSString const *kShowRock = @"showRock";
     cell.imageView.image = imageForCell;
 //  cell.imageViewRockThumbnail.image = rock.imageThumbnail;
     cell.imageViewRockThumbnail.image = [UIImage imageNamed:@"S002"];
-;
 
     cell.imageViewRockThumbnail.contentMode = UIViewContentModeScaleAspectFit;
     cell.imageViewCountry.image = [UIImage imageNamed:@"Flag of United States"];
@@ -104,12 +147,15 @@ static NSString const *kShowRock = @"showRock";
     cell.labelNumber.text = [NSString stringWithFormat:@"%03d", (int)indexPath.row + 1];
     [cell.labelNumber setFont:fontForNumber];
     
+    [arrayOfAllIndexPaths addObject:indexPath];
+  
     return cell;
 }
 
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    arrayOfAllIndexPaths = [NSMutableArray new];
     return rocks.count;
 }
 
@@ -170,6 +216,22 @@ static NSString const *kShowRock = @"showRock";
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     return UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+    if (kind == UICollectionElementKindSectionHeader) {
+        
+        UICollectionReusableView *reusableview = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"header" forIndexPath:indexPath];
+        
+        if (reusableview==nil) {
+            reusableview=[[UICollectionReusableView alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
+        }
+  //      [reusableview addSubview:searchBar];
+       
+        return reusableview;
+    }
+    return nil;
 }
 
 -(NSUInteger)supportedInterfaceOrientations

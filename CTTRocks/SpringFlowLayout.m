@@ -14,6 +14,7 @@
 
 - (void)prepareLayout{
     [super prepareLayout];
+    
     if (!_dynamicAnimator) {
         _dynamicAnimator = [[UIDynamicAnimator alloc] initWithCollectionViewLayout:self];
         CGSize contentSize = [self collectionViewContentSize];
@@ -60,5 +61,6 @@
     }
     return NO;
 }
+
 
 @end

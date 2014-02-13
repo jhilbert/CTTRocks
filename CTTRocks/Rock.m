@@ -9,6 +9,8 @@
 #import "Rock.h"
 
 static NSMutableArray *rocks;
+static NSMutableArray *rocksFiltered;
+static NSString *lastUsedFilter;
 static NSArray *imagePaths;
 
 @interface Rock ()
@@ -71,5 +73,43 @@ static NSArray *imagePaths;
     
     return rocks;
 
+}
+
++(NSMutableArray*)rocksFiltered:(NSString*)filterString
+{
+    if ([lastUsedFilter isEqualToString:filterString])
+        return rocksFiltered;
+    
+    rocksFiltered = [NSMutableArray new];
+    for (Rock *rock in [Rock rocks])
+    {
+        if ([rock.title rangeOfString:filterString].location != NSNotFound)
+        {
+            [rocksFiltered addObject:rock];
+        }
+        else
+        {
+            if ([rock.country rangeOfString:filterString].location != NSNotFound)
+            {
+                [rocksFiltered addObject:rock];
+            }
+            else
+            {
+                if ((rock.state) && [rock.state rangeOfString:filterString].location != NSNotFound)
+                {
+                    [rocksFiltered addObject:rock];
+                }
+                else
+                {
+                    if ([rock.location rangeOfString:filterString].location != NSNotFound)
+                    {
+                        [rocksFiltered addObject:rock];
+                    }
+                }
+            }
+        }
+    }
+    return rocksFiltered;
+   
 }
 @end

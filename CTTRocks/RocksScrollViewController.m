@@ -117,7 +117,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:YES];
-   
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
     startingX = (int)self.selectedRock * (int)self.view.frame.size.width;
     [scrollView setContentOffset:CGPointMake(startingX, self.view.frame.size.height)];
 }

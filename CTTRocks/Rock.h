@@ -21,6 +21,7 @@
 @property (nonatomic, strong) UIImage *imageOfBuilding;
 
 
-+(NSArray*) rocks;
++(NSArray*)rocks;
++(NSArray*)rocksFiltered:(NSString*)filterString;
 
 @end
