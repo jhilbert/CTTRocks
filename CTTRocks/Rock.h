@@ -17,6 +17,10 @@
 @property (nonatomic, strong) NSString *year;
 @property (nonatomic, strong) NSString *text;
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UIImage *imageThumbnail;
 @property (nonatomic, strong) UIImage *imageOfBuilding;
+
+
++(NSArray*) rocks;
 
 @end

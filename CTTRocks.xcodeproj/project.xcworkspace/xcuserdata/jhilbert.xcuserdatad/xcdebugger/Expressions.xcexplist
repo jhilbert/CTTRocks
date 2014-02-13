@@ -3,10 +3,21 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[ViewController viewDidAppear:]:ViewController.m">
+         contextName = "-[RocksScrollViewController viewDidAppear:]:RocksScrollViewController.m">
          <PersistentStrings>
             <PersistentString
-               value = "_rocks.count">
+               value = "self.selectedRock">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MainCollectionViewController prepareForSegue:sender:]:MainCollectionViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "vc.selectedRock">
+            </PersistentString>
+            <PersistentString
+               value = "selectedIP">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
