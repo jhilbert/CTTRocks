@@ -38,29 +38,34 @@
     return [_dynamicAnimator layoutAttributesForCellAtIndexPath:indexPath];
 }
 
-- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds{
-    UIScrollView *scrollView = self.collectionView;
-    CGFloat scrollDelta = newBounds.origin.y - scrollView.bounds.origin.y;
-    CGPoint touchLocation = [scrollView.panGestureRecognizer locationInView:scrollView];
-    for (UIAttachmentBehavior *spring in _dynamicAnimator.behaviors) {
-        CGPoint anchorPoint = spring.anchorPoint;
-        CGFloat distanceFromTouch = fabsf(touchLocation.y - anchorPoint.y);
-        
-        CGFloat scrollResistance = distanceFromTouch/500;
-        
-        UICollectionViewLayoutAttributes *item = [spring.items firstObject];
-        CGPoint center = item.center;
-        center.y += scrollDelta*scrollResistance;
+//- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds{
+//    UIScrollView *scrollView = self.collectionView;
+//    CGFloat scrollDelta = newBounds.origin.y - scrollView.bounds.origin.y;
+//    CGPoint touchLocation = [scrollView.panGestureRecognizer locationInView:scrollView];
+//    for (UIAttachmentBehavior *spring in _dynamicAnimator.behaviors) {
+//        CGPoint anchorPoint = spring.anchorPoint;
+//        CGFloat distanceFromTouch = fabsf(touchLocation.y - anchorPoint.y);
+//        
+//        CGFloat scrollResistance = distanceFromTouch/500;
+//        
+//        UICollectionViewLayoutAttributes *item = [spring.items firstObject];
+//        CGPoint center = item.center;
+//        center.y += scrollDelta*scrollResistance;
+//
+//        
+//        item.center = center;
+//  
+//        
+// //      NSLog(@"scrollDelta: %f  distFromTouch: %f  m ", scrollDelta, distanceFromTouch);
+//        [_dynamicAnimator updateItemUsingCurrentState:item];
+//    }
+//    return NO;
+//}
 
-        
-        item.center = center;
-  
-        
- //      NSLog(@"scrollDelta: %f  distFromTouch: %f  m ", scrollDelta, distanceFromTouch);
-        [_dynamicAnimator updateItemUsingCurrentState:item];
-    }
-    return NO;
+-(CGSize)collectionViewContentSize {
+    NSInteger ySize = [self.collectionView numberOfItemsInSection:0] * (75+10); // the 20 is for spacing between cells.
+    NSInteger xSize = [self.collectionView numberOfSections] * (320);
+    return CGSizeMake(xSize, ySize);
 }
-
 
 @end

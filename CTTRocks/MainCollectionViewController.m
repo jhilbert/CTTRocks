@@ -15,18 +15,18 @@
 
 static NSString const *kShowRock = @"showRock";
 
-@interface MainCollectionViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UISearchBarDelegate>
+@interface MainCollectionViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UISearchBarDelegate, UITextFieldDelegate>
 
 {
     NSArray *rocks;
     UIImage *imageForCell;
-
-
+    
+    __weak IBOutlet UITextField *searchTextField;
+    
     IBOutlet UICollectionView *collectionView;
     __weak IBOutlet UICollectionViewFlowLayout *collectionViewFlowLayout;
     
     NSIndexPath *selectedIP;
-    NSMutableArray *arrayOfAllIndexPaths;
     
     UICollectionViewFlowLayout *springFlowLayout;
     
@@ -35,105 +35,123 @@ static NSString const *kShowRock = @"showRock";
     UIFont *fontForTitle;
     UIFont *fontForLocation;
     UIFont *fontForNumber;
-    
+    UIColor *colorCT;
+    UIColor *colorCTFacade;
+
 }
 
 @end
 
 @implementation MainCollectionViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    fontForTitle = [UIFont fontWithName:@"HelveticaNeue-Bold" size:17];
-    fontForLocation = [UIFont fontWithName:@"HelveticaNeue" size:17];
+    fontForTitle = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16];
+    fontForLocation = [UIFont fontWithName:@"HelveticaNeue" size:14];
     fontForNumber = [UIFont fontWithName:@"HelveticaNeue" size:12];
     
-//    springFlowLayout = [[SpringFlowLayout alloc] init];
-//    springFlowLayout.itemSize = CGSizeMake(300, 300);
-//    springFlowLayout.headerReferenceSize = CGSizeMake(collectionView.frame.size.width, 100);
-//
-//    collectionViewFlowLayout = springFlowLayout;
+    colorCT = [UIColor colorWithRed:7.0/255.0 green:66.0/255.0 blue:133.0/255.0 alpha:1.0];
+    colorCTFacade = [UIColor colorWithRed:205.0/255.0 green:186.0/255.0 blue:146.0/255.0 alpha:1.0];
+    
+    springFlowLayout = [[SpringFlowLayout alloc] init];
+    springFlowLayout.itemSize = CGSizeMake(320, 75);
+    springFlowLayout.headerReferenceSize = CGSizeMake(collectionView.frame.size.width, 100);
+    
+ //   collectionViewFlowLayout = springFlowLayout;
     collectionViewFlowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
-    collectionView.backgroundColor = [UIColor blackColor];
- 
+    
     collectionView.delegate = self;
     collectionView.dataSource = self;
+    collectionView.backgroundColor = colorCT;
     
     landscape = NO;
     
+    searchTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    searchTextField.clearsOnBeginEditing = YES;
+    searchTextField.placeholder = @"Search for ...";
+    
     rocks = [Rock rocks];
-   
+    
     imageForCell = [UIImage imageNamed:@"640x150_rounded_opaque"];
-
+    self.navigationController.toolbar.barTintColor = colorCT;
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
-
--(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-{
-    if ([searchText isEqualToString:@""])
+    
+- (IBAction)searchTextFieldDidEndOnExit:(id)sender {
+    if ([searchTextField.text isEqualToString:@""])
     {
         rocks = [Rock rocks];
     }
     else
     {
-        rocks = [Rock rocksFiltered:searchText];
+        rocks = [Rock rocksFiltered:searchTextField.text];
     }
-    
-    dispatch_async(dispatch_get_main_queue(), ^
-                   {
-                       [collectionView reloadItemsAtIndexPaths:arrayOfAllIndexPaths];
-    //
-    //                   [collectionView reloadData];
-                   });
-   
-    [collectionView reloadData];
+    [self.collectionView performBatchUpdates:^{
+        [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+        [collectionView reloadData];
+    } completion:nil];
+    [searchTextField resignFirstResponder];
 }
 
--(void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    [searchBar setShowsCancelButton:YES animated:YES];
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    return YES;
 }
 
--(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    [searchBar setText:@""];
-    [searchBar setShowsCancelButton:NO animated:YES];
-    [searchBar resignFirstResponder];
-}
+// delete code if we decide that we need NO searchBar in CollectionViewHeader!
+
+//-(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+//{
+//    if ([searchText isEqualToString:@""])
+//    {
+//        rocks = [Rock rocks];
+//    }
+//    else
+//    {
+//        rocks = [Rock rocksFiltered:searchText];
+//    }
+//    [self.collectionView performBatchUpdates:^{
+//        [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+//    } completion:nil];
+//}
+//
+//-(void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+//    [searchBar setShowsCancelButton:YES animated:YES];
+//}
+//
+//-(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+//    [searchBar setText:@""];
+//    [searchBar setShowsCancelButton:NO animated:YES];
+//    [searchBar resignFirstResponder];
+//}
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)cv cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CTTCollectionViewCell *cell = [cv dequeueReusableCellWithReuseIdentifier:@"Cell" forIndexPath:indexPath];
     cell.imageView.contentMode = UIViewContentModeScaleAspectFit;
-
- //   cell.imageView.frame = CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height);
- //   cell.imageView.center = cell.center;
-
+    cell.backgroundColor = colorCT;
+    
+    //   cell.imageView.frame = CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height);
+    //   cell.imageView.center = cell.center;
+    
     Rock *rock = rocks[indexPath.row];
-    cell.imageView.image = imageForCell;
-//  cell.imageViewRockThumbnail.image = rock.imageThumbnail;
-    cell.imageViewRockThumbnail.image = [UIImage imageNamed:@"S002"];
-
+//    cell.imageView.image = imageForCell;
+    //  cell.imageViewRockThumbnail.image = rock.imageThumbnail;
+    cell.imageViewRockThumbnail.image = [UIImage imageNamed:@"S003"];
+    
     cell.imageViewRockThumbnail.contentMode = UIViewContentModeScaleAspectFit;
     cell.imageViewCountry.image = [UIImage imageNamed:@"Flag of United States"];
     cell.imageViewCountry.contentMode = UIViewContentModeScaleAspectFit;
     cell.labelTitle.text = rock.title;
+    cell.labelTitle.textColor = colorCTFacade;
     [cell.labelTitle setFont:fontForTitle];
-
+    
     if ([rock.country isEqualToString:@"USA"])
     {
         cell.labelLocation.text = [NSString stringWithFormat:@"%@ %@ %@",rock.country, rock.state, rock.location];
@@ -142,33 +160,36 @@ static NSString const *kShowRock = @"showRock";
     {
         cell.labelLocation.text = [NSString stringWithFormat:@"%@ %@",rock.country, rock.location];
     }
+    cell.labelLocation.textColor = colorCTFacade;
     [cell.labelLocation setFont:fontForLocation];
-
+    
     cell.labelNumber.text = [NSString stringWithFormat:@"%03d", (int)indexPath.row + 1];
+    cell.labelNumber.textColor = colorCTFacade;
     [cell.labelNumber setFont:fontForNumber];
     
-    [arrayOfAllIndexPaths addObject:indexPath];
-  
     return cell;
 }
-
-
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    arrayOfAllIndexPaths = [NSMutableArray new];
+    [collectionView.collectionViewLayout invalidateLayout];
     return rocks.count;
+}
+
+- (CGSize)collectionView:(UICollectionView *)cv layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CGSizeMake(320, 75);
 }
 
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
     [self.collectionView.collectionViewLayout invalidateLayout];
-
+    
     if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation))
     {
         [collectionView setCollectionViewLayout:springFlowLayout animated:YES];
         collectionViewFlowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
         
-     //   collectionViewFlowLayout = flowLayoutLandscape;
+        //   collectionViewFlowLayout = flowLayoutLandscape;
         [(UICollectionViewFlowLayout*)collectionView.collectionViewLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
         landscape = YES;
     }
@@ -190,28 +211,14 @@ static NSString const *kShowRock = @"showRock";
     CTTCollectionViewCell *cell = ((CTTCollectionViewCell*)[collectionView cellForItemAtIndexPath:indexPath]);
     cell.imageView.alpha = 1.0;
     selectedIP = indexPath;
-    
     [self performSegueWithIdentifier:kShowRock sender:indexPath];
-
+    
 }
 
 - (void)collectionView:(UICollectionView *)cv didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"did deselect");
     CTTCollectionViewCell *cell = ((CTTCollectionViewCell*)[collectionView cellForItemAtIndexPath:indexPath]);
     cell.imageView.alpha = 1.0;
-}
-
-
-
-- (CGSize)collectionView:(UICollectionView *)cv layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-
-    CGSize retval;
-    
-    if (landscape)
-        retval = CGSizeMake(640, 150);
-    else
-        retval = CGSizeMake(320, 75);
-    return retval;
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
@@ -227,8 +234,6 @@ static NSString const *kShowRock = @"showRock";
         if (reusableview==nil) {
             reusableview=[[UICollectionReusableView alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
         }
-  //      [reusableview addSubview:searchBar];
-       
         return reusableview;
     }
     return nil;
@@ -248,14 +253,6 @@ static NSString const *kShowRock = @"showRock";
         vc.selectedRock = selectedIP.row;
         NSLog(@"segue to %i", selectedIP.row);
     }
-}
-
-
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 @end
