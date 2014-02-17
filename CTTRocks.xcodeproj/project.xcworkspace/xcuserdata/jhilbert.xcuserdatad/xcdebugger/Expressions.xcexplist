@@ -3,10 +3,32 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[MainCollectionViewController collectionView:cellForItemAtIndexPath:]:MainCollectionViewController.m">
+         contextName = "+[Rock rocksFiltered:]:Rock.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[rock.state rangeOfString:filterString]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__13+[Rock rocks]_block_invoke:Rock.m">
          <PersistentStrings>
             <PersistentString
                value = "rock.title">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "+[Rock loadTexts]:Rock.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "assetPaths[0]">
+            </PersistentString>
+            <PersistentString
+               value = "rocks">
+            </PersistentString>
+            <PersistentString
+               value = "assestPaths[i]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -30,10 +52,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "+[Rock rocksFiltered:]:Rock.m">
+         contextName = "-[MainCollectionViewController collectionView:cellForItemAtIndexPath:]:MainCollectionViewController.m">
          <PersistentStrings>
             <PersistentString
-               value = "[rock.state rangeOfString:filterString]">
+               value = "rock.title">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

@@ -51,9 +51,11 @@ static NSString const *kShowRock = @"showRock";
     fontForTitle = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16];
     fontForLocation = [UIFont fontWithName:@"HelveticaNeue" size:14];
     fontForNumber = [UIFont fontWithName:@"HelveticaNeue" size:12];
-    
-    colorCT = [UIColor colorWithRed:7.0/255.0 green:66.0/255.0 blue:133.0/255.0 alpha:1.0];
-    colorCTFacade = [UIColor colorWithRed:205.0/255.0 green:186.0/255.0 blue:146.0/255.0 alpha:1.0];
+ 
+    colorCT = [UIColor whiteColor];
+    colorCTFacade = [UIColor blackColor];
+ //   colorCT = [UIColor colorWithRed:7.0/255.0 green:66.0/255.0 blue:133.0/255.0 alpha:1.0];
+ //   colorCTFacade = [UIColor colorWithRed:205.0/255.0 green:186.0/255.0 blue:146.0/255.0 alpha:1.0];
     
     springFlowLayout = [[SpringFlowLayout alloc] init];
     springFlowLayout.itemSize = CGSizeMake(320, 75);
@@ -250,6 +252,7 @@ static NSString const *kShowRock = @"showRock";
     {
         NSIndexPath *itemSelected = [collectionView indexPathsForSelectedItems][0];
         RocksScrollViewController *vc = segue.destinationViewController;
+        vc.selectedRock = selectedIP.row;
         vc.selectedRock = selectedIP.row;
         NSLog(@"segue to %i", selectedIP.row);
     }

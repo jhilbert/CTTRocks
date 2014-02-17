@@ -12,5 +12,6 @@
 
 @property (strong, nonatomic) NSArray *rocks;
 @property NSInteger *selectedRock;
+@property NSInteger *rocksFiltered;
 
 @end

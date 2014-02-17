@@ -56,7 +56,7 @@
         //    if (self.indexPathRow == n) {
         //        startingX = width;
         //    }
-  
+        
         UIView *upperOverlay = [[UIView alloc] init];
         [scrollView addSubview:upperOverlay];
         upperOverlay.frame = CGRectMake(width+10, 5, self.view.frame.size.width - 20, 42);
@@ -86,15 +86,15 @@
         [upperOverlay addSubview:location];
         
         UILabel *year = [[UILabel alloc] initWithFrame:(CGRectMake(265, 22, 50, 21))];
-        year.text = rock.year;
+        year.text = [NSString stringWithFormat:@"@%i", rock.positionOnFacade];
         [year setFont:fontForLocation];
         year.textColor = colorCTFacade;
         [upperOverlay addSubview:year];
- 
+        
         UIView *lowerOverlay = [[UIView alloc] init];
         lowerOverlay.tag = 001;
         [scrollView addSubview:lowerOverlay];
-        lowerOverlay.frame = CGRectMake(width+10, 250, self.view.frame.size.width - 20, 410);
+        lowerOverlay.frame = CGRectMake(width+20, 250, self.view.frame.size.width - 40, 410);
         lowerOverlay.backgroundColor = colorCT;
         lowerOverlay.alpha = 0.9;
         
@@ -102,28 +102,31 @@
         
         [lowerOverlay addGestureRecognizer:panGesture];
         
-        NSAttributedString *textString =  [[NSAttributedString alloc] initWithString:rock.text attributes:@{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:14]}];
-        NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:textString];
-        NSLayoutManager *textLayout = [[NSLayoutManager alloc] init];
-        // Add layout manager to text storage object
-        [textStorage addLayoutManager:textLayout];
-        // Create a text container
-        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.view.bounds.size];
-        // Add text container to text layout manager
-        [textLayout addTextContainer:textContainer];
-        
-        UITextView *textView = [[UITextView alloc] initWithFrame:(CGRectMake(5, 200, 290, 190)) textContainer:textContainer];
-        [lowerOverlay addSubview:textView];
-        textView.backgroundColor = colorCTFacade;
-        textView.text = rock.text;
-        textView.editable = NO;
-        textView.selectable = NO;
-        textView.alpha = 1.0;
+        if (rock.text)
+        {
+            NSAttributedString *textString =  [[NSAttributedString alloc] initWithAttributedString:rock.text];
+            NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:textString];
+            NSLayoutManager *textLayout = [[NSLayoutManager alloc] init];
+            // Add layout manager to text storage object
+            [textStorage addLayoutManager:textLayout];
+            // Create a text container
+            NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.view.bounds.size];
+            // Add text container to text layout manager
+            [textLayout addTextContainer:textContainer];
+            
+            UITextView *textView = [[UITextView alloc] initWithFrame:(CGRectMake(10, 210, 260, 180)) textContainer:textContainer];
+            [lowerOverlay addSubview:textView];
+            textView.backgroundColor = colorCTFacade;
+            //       textView.attributedText = rock.text;
+            textView.editable = NO;
+            textView.selectable = NO;
+            textView.alpha = 1.0;
+        }
         
         UIImageView *imageOfBuildingView = [[UIImageView alloc] initWithImage:rock.imageOfBuilding];
         [lowerOverlay addSubview:imageOfBuildingView];
         imageOfBuildingView.contentMode = UIViewContentModeScaleAspectFit;
-        imageOfBuildingView.frame = CGRectMake(5, 5, 290, 190);
+        imageOfBuildingView.frame = CGRectMake(10, 10, 260, 190);
         imageOfBuildingView.clipsToBounds = YES;
         imageOfBuildingView.backgroundColor = colorCT;
         
@@ -139,16 +142,16 @@
 -(IBAction)handlePanGesture:(UIPanGestureRecognizer *)sender
 {
     CGPoint translate = [sender translationInView:self.view];
-  
+    
     CGPoint draggingPoint = [sender locationInView:self.view];
     UIView *hitView = [self.view hitTest:draggingPoint withEvent:nil];
     if (hitView.tag == 001)
-        {
+    {
         
-    hitView.center = CGPointMake(hitView.center.x + translate.x,
-                                                 hitView.center.y + translate.y);
-    [sender setTranslation:CGPointMake(0, 0) inView:hitView];
-        }
+        hitView.center = CGPointMake(hitView.center.x + translate.x,
+                                     hitView.center.y + translate.y);
+        [sender setTranslation:CGPointMake(0, 0) inView:hitView];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -169,7 +172,7 @@
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
     // UITabBarItem 'tag' value is used to identify the saved tab bar item
- 
+    
     if (item.tag == 1) {
         for (UIView *view in scrollView.subviews)
         {
@@ -182,11 +185,11 @@
                         imageView.alpha = 0;
                     }
                 }
-
+                
             }
         }
     }
-
+    
     if (item.tag == 2) {
         for (UIView *view in scrollView.subviews)
         {
